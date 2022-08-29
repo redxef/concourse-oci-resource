@@ -5,10 +5,15 @@ set -eu
 [ -e /opt/resource/common ] && cd /opt/resource
 . ./common
 
+image_repository="$(jq -r .params.image < "$INPUT_FILE")"
+if [ -z "$image_repository" ]; then
+    fail "must specify param `image'"
+fi
+
 image_refs_file="$(mktemp -t)"
 oci_dir="$(mktemp -d)"
 cd "$oci_dir"
-tar xf "$1/$(jq -r .params.image < "$INPUT_FILE")"
+tar xf "$1/$image_repository"
 cd - 1>&2 2>/dev/null
 
 crane push "$oci_dir" "$REPOSITORY:$TAG" --image-refs="$image_refs_file"
