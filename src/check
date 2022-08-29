@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+set -eu
+
+. ./common
+
+jq -r tostring << EOF
+[
+    $(crane digest "$REPOSITORY:$TAG")
+]
+EOF

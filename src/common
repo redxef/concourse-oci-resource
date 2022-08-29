@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+INPUT_FILE="$(mktemp -t)"
+cat > "$INPUT_FILE" <&0
+export INPUT_FILE
+
+REPOSITORY="$(jq -r .source.repository < "$INPUT_FILE")"
+TAG="$(jq -r .source.tag < "$INPUT_FILE")"
+
+export REPOSITORY
+export TAG

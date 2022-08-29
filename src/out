@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+set -eu
+
+. ./common
+
+IMAGE_REFS_FILE="$(mktemp -t)"
+oci_dir="$(mktemp -d)"
+pushd "$oci_dir" && tar xf "$1/$(jq -r .params.image < "$INPUT_FILE")" && popd
+crane push "$1" "$REPOSITORY:$TAG" --image-refs="$IMAGE_REFS_FILE"
+sed 's/^[^@]*@//' < "$IMAGE_REFS_FILE"

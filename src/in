@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+set -eu
+
+. ./common
+
+oci_dir="$(mktemp -d)"
+crane pull --format=oci "$REPOSITORY:@$(jq -r .version "$INPUT_FILE")" "$oci_dir"
+pushd "$oci_dir" && tar cf "$1/image.tar" && popd
+
+echo "$(jq -r .version < "$INPUT_FILE")"
