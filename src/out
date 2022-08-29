@@ -14,7 +14,7 @@ cd - 1>&2 2>/dev/null
 crane push "$oci_dir" "$REPOSITORY:$TAG" --image-refs="$image_refs_file"
 additional_tags="$(jq -r .params.additional_tags < "$INPUT_FILE")"
 if [ -n "$additional_tags" ]; then
-    if [ -r "$1/$additional_tags" ]; then
+    if ! [ -r "$1/$additional_tags" ]; then
         fail "cannot open file $1/$additional_tags"
     fi
     tr '[:space:]' '\n' < "$1/$additional_tags" | grep -v '^$' | while read -r tag; do
