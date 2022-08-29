@@ -66,11 +66,8 @@ if [ -n "$USERNAME" ]; then
     if [ -z "$PASSWORD" ]; then
         fail "need to also give password when logging in"
     fi
-    if [ -z "$REPOSITORY" ]; then
-        docker_login ''
-    else
-        docker_login "$(split_repo_domain "$REPOSITORY" | head -n1)"
-    fi
+    docker_login "$(split_repo_domain "$REPOSITORY" | head -n1)"
+    jq -r . < "$HOME/.docker/config.json"
 fi
 
 if [ -z "$REPOSITORY" ]; then
