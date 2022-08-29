@@ -5,6 +5,11 @@ resource_types:
   source:
     repository: redxef/concourse-oci-resource
     tag: latest
+- name: oci-image-testing
+  type: registry-image
+  source:
+    repository: redxef/concourse-oci-resource
+    tag: edge
 resources:
 - name: source
   type: git
@@ -18,6 +23,13 @@ resources:
     repository: alpine
 - name: concourse-oci-resource
   type: oci-image
+  source:
+    repository: redxef/concourse-oci-resource
+    tag: edge
+    username: ((docker.username))
+    password: ((docker.password))
+- name: concourse-oci-resource-testing
+  type: oci-image-testing
   source:
     repository: redxef/concourse-oci-resource
     tag: edge
@@ -79,3 +91,40 @@ jobs:
     params:
       image: build-output/image.tar
       additional_tags: docker-tags/tags.txt
+- name: test-and-tag
+  plan:
+  - get: concourse-oci-resource
+    passed:
+    - build-push-edge
+    trigger: true
+  - get: concourse-oci-resource-testing
+    # TODO: verify artifacts
+  - put: concourse-oci-resource-testing
+    inputs:
+    - concourse-oci-resource-testing
+    params:
+      image: concourse-oci-resource-testing/image.tar
+  - task: create-latest-tag-file
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: alpine/git
+      outputs:
+      - name: latest-tag
+      run:
+        path: sh
+        args:
+        - -c
+        - |
+          #!/usr/bin/env sh
+          echo latest > latest-tag/tags.txt
+  - put: concourse-oci-resource
+    inputs:
+    - concourse-oci-resource
+    - latest-tag
+    params:
+      image: concourse-oci-resource/image.tar
+      additional_tags: latest-tag/tags.txt
+
