@@ -7,6 +7,8 @@ set -eu
 
 IMAGE_REFS_FILE="$(mktemp -t)"
 oci_dir="$(mktemp -d)"
-cd "$oci_dir" && tar xf "$1/$(jq -r .params.image < "$INPUT_FILE")" && cd -
+cd "$oci_dir"
+tar xf "$1/$(jq -r .params.image < "$INPUT_FILE")"
+cd - 1>&2
 crane push "$oci_dir" "$REPOSITORY:$TAG" --image-refs="$IMAGE_REFS_FILE"
 sed 's/^[^@]*@//' < "$IMAGE_REFS_FILE"
