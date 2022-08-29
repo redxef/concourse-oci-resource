@@ -1,4 +1,10 @@
 ---
+resource_types:
+- name: oci-image
+  type: registry-image
+  source:
+    repository: redxef/concourse-oci-resource
+    tag: latest
 resources:
 - name: source
   type: git
@@ -10,9 +16,16 @@ resources:
   type: registry-image
   source:
     repository: alpine
+- name: concourse-oci-resource
+  type: oci-image
+  source:
+    repository: redxef/concourse-oci-resource
+    tag: edge
+    username: ((docker.username))
+    password: ((docker.password))
 
 jobs:
-- name: build-push
+- name: build-push-edge
   plan:
   - get: source
     trigger: true
@@ -48,20 +61,21 @@ jobs:
         type: registry-image
         source:
           repository: redxef/concourse-buildkit
-          tag: v0.2.1
       inputs:
       - name: source
         path: .
-      - name: docker-tags
+      outputs:
+      - name: build-output
       params:
-        username: ((docker.username))
-        password: ((docker.password))
-        repository: docker.io/redxef/concourse-oci-resource
-        tag: latest
-        additional_tags: docker-tags/tags.txt
-        push: true
+        dest: build-output/image.tar
         platform: aarch64,arm,ppc64le,s390x,x86_64
         context: .
-        manual: false
       run:
         path: build
+  - put: concourse-oci-resource
+    inputs:
+    - build-output
+    - docker-tags
+    params:
+      image: build-output/image.tar
+      additional_tags: docker-tags/tags.txt
