@@ -4,7 +4,7 @@
 
 DEFAULT_DOMAIN=docker.io
 LEGACY_DEFAULT_DOMAIN=index.docker.io
-DOCKER_LOGIN_FILE_TMPL='{"auths": { {{REGISTRY_URL}}: { "auth": {{BASE64_UNAME_PW}} }}}'
+DOCKER_LOGIN_FILE_TMPL='{"auths": { "{{REGISTRY_URL}}": { "auth": {{BASE64_UNAME_PW}} }}}'
 
 fail() {
     echo "Error:" "$@" 1>&2
@@ -67,7 +67,6 @@ if [ -n "$USERNAME" ]; then
         fail "need to also give password when logging in"
     fi
     docker_login "$(split_repo_domain "$REPOSITORY" | head -n1)"
-    jq -r . < "$HOME/.docker/config.json"
 fi
 
 if [ -z "$REPOSITORY" ]; then
