@@ -7,7 +7,7 @@ set -eu
 
 image_repository="$(jq -r .params.image < "$INPUT_FILE")"
 if [ -z "$image_repository" ]; then
-    fail "must specify param `image'"
+    fail "must specify param 'image'"
 fi
 
 image_refs_file="$(mktemp -t)"
