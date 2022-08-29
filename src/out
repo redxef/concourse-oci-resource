@@ -2,6 +2,7 @@
 
 set -eu
 
+[ -e /opt/resource/common ] && cd /opt/resource
 . ./common
 
 IMAGE_REFS_FILE="$(mktemp -t)"
