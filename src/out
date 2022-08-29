@@ -5,14 +5,28 @@ set -eu
 [ -e /opt/resource/common ] && cd /opt/resource
 . ./common
 
-IMAGE_REFS_FILE="$(mktemp -t)"
+image_refs_file="$(mktemp -t)"
 oci_dir="$(mktemp -d)"
 cd "$oci_dir"
 tar xf "$1/$(jq -r .params.image < "$INPUT_FILE")"
 cd - 1>&2 2>/dev/null
-crane push "$oci_dir" "$REPOSITORY:$TAG" --image-refs="$IMAGE_REFS_FILE"
+
+crane push "$oci_dir" "$REPOSITORY:$TAG" --image-refs="$image_refs_file"
+additional_tags="$(jq .params.additional_tags < "$INPUT_FILE")"
+if [ -n "$additional_tags" ]; then
+    if ! [ -e "$additional_tags" ]; then
+        fail "additional_tags specified, but doesn't exist"
+    fi
+    tr ' \n\t' '\n\n\n' | grep -v '^$' | while read -r tag; do
+        crane tag "$REPOSITORY:@$(cat "$image_refs_file)" "$tag"
+    done
+fi
 
 filter='{
   "version": {"digest": $version}
 } | tostring'
-jq -r --null-input --arg version "$(sed 's/^[^@]*@//' < "$IMAGE_REFS_FILE")" "$filter"
+jq -r --null-input --arg version "$(sed 's/^[^@]*@//' < "$image_refs_file")" "$filter"
+
+rm -r "$oci_dir"
+rm "$image_refs_file"
+rm "$INPUT_FILE"

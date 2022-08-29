@@ -9,3 +9,5 @@ filter='[
   {"digest": $version}
 ] | tostring'
 jq -r --null-input --arg version "$(crane digest "$REPOSITORY:$TAG")" "$filter"
+
+rm "$INPUT_FILE"

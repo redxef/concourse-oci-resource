@@ -6,12 +6,23 @@ set -eu
 . ./common
 
 oci_dir="$(mktemp -d)"
-crane pull --format=oci "$REPOSITORY:@$(jq -r .version.digest "$INPUT_FILE")" "$oci_dir"
+digest="$(jq -r .version.digest < "$INPUT_FILE")"
+crane pull --format=oci "$REPOSITORY:@$digest" "$oci_dir"
 cd "$oci_dir"
+
+# write outputs
 tar cf "$1/image.tar" ./*
+echo "$REPOSITORY" > "$1/repository"
+echo "$digest" > "$1/digest"
+
 cd - 1>&2 2>/dev/null
 
+# output
 filter='{
   "version": .version
 } | tostring'
 jq -r "$filter" < "$INPUT_FILE"
+
+# cleanup
+rm -r "$oci_dir"
+rm "$INPUT_FILE"
