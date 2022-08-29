@@ -54,3 +54,8 @@ Push the image to the repository and add tags.
 
 - additional\_tags: *Optional*. The path to a file containing more tags.
 
+## Example
+
+See [ci/pipeline.yml](ci/pipeline.yml) for an example usage. This
+pipeline builds this image, first with the "edge" tag and after the
+tests run successfully it tags the build as "latest".
