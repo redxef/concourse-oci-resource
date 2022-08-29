@@ -11,4 +11,7 @@ cd "$oci_dir"
 tar cf "$1/image.tar" ./*
 cd - 1>&2 2>/dev/null
 
-jq -r '.version | tostring' < "$INPUT_FILE"
+filter='{
+  "version": .version
+} | tostring'
+jq -r "$filter" < "$INPUT_FILE"

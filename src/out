@@ -11,4 +11,8 @@ cd "$oci_dir"
 tar xf "$1/$(jq -r .params.image < "$INPUT_FILE")"
 cd - 1>&2 2>/dev/null
 crane push "$oci_dir" "$REPOSITORY:$TAG" --image-refs="$IMAGE_REFS_FILE"
-jq -r --null-input --arg version "$(sed 's/^[^@]*@//' < "$IMAGE_REFS_FILE")" '{"digest": $version} | tostring'
+
+filter='{
+  "version": {"digest": $version}
+} | tostring'
+jq -r --null-input --arg version "$(sed 's/^[^@]*@//' < "$IMAGE_REFS_FILE")" "$filter"

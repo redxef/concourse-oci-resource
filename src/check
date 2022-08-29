@@ -4,4 +4,8 @@ set -eu
 
 [ -e /opt/resource/common ] && cd /opt/resource
 . ./common
-jq -r --null-input --arg version "$(crane digest "$REPOSITORY:$TAG")" '[{"digest": $version}] | tostring'
+
+filter='[
+  {"digest": $version}
+] | tostring'
+jq -r --null-input --arg version "$(crane digest "$REPOSITORY:$TAG")" "$filter"
