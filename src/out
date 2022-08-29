@@ -14,11 +14,8 @@ cd - 1>&2 2>/dev/null
 crane push "$oci_dir" "$REPOSITORY:$TAG" --image-refs="$image_refs_file"
 additional_tags="$(jq .params.additional_tags < "$INPUT_FILE")"
 if [ -n "$additional_tags" ]; then
-    if ! [ -e "$additional_tags" ]; then
-        fail "additional_tags specified, but doesn't exist"
-    fi
-    tr ' \n\t' '\n\n\n' | grep -v '^$' | while read -r tag; do
-        crane tag "$REPOSITORY:@$(cat "$image_refs_file)" "$tag"
+    tr '[:space:]' '\n' < "$1/$additional_tags" | grep -v '^$' | while read -r tag; do
+        crane tag "$REPOSITORY:@$(cat "$image_refs_file")" "$tag"
     done
 fi
 
