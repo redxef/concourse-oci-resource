@@ -11,4 +11,4 @@ cd "$oci_dir"
 tar cf "$1/image.tar" ./*
 cd - 1>&2
 
-echo "$(jq -r .version < "$INPUT_FILE")"
+echo "$(jq .version < "$INPUT_FILE")"
