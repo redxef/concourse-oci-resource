@@ -4,7 +4,7 @@
 
 DEFAULT_DOMAIN=docker.io
 LEGACY_DEFAULT_DOMAIN=index.docker.io
-DOCKER_LOGIN_FILE_TMPL='{"auths": { "{{REGISTRY_URL}}": { "auth": {{BASE64_UNAME_PW}} }}}'
+DOCKER_LOGIN_FILE_TMPL='{"auths": { "{{REGISTRY_URL}}": { "auth": "{{BASE64_UNAME_PW}}" }}}'
 
 fail() {
     echo "Error:" "$@" 1>&2
