@@ -32,7 +32,7 @@ split_repo_domain() {
 
     if [ -z "$domain_part" ]; then
         domain_part="$DEFAULT_DOMAIN"
-        other_part="$other_part"
+        # other_part="$other_part"
     elif echo "$domain_part" | grep -Evq '\.|:' && [ "$domain_part" != 'localhost' ]; then
         # ^ docker sourcecode checks if $domain_part == $domain_part.lower() in effect checking if all is lower case
         domain_part="$DEFAULT_DOMAIN"
