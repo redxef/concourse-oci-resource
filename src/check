@@ -4,4 +4,4 @@ set -eu
 
 [ -e /opt/resource/common ] && cd /opt/resource
 . ./common
-jq --null-input --arg version "$(crane digest "$REPOSITORY:$TAG")" '[$version]'
+jq --null-input --arg version "$(crane digest "$REPOSITORY:$TAG")" '[{"digest": $version}]' | jq -r tostring
