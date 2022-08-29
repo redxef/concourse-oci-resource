@@ -6,7 +6,7 @@ set -eu
 . ./common
 
 oci_dir="$(mktemp -d)"
-crane pull --format=oci "$REPOSITORY:@$(jq -r .version "$INPUT_FILE")" "$oci_dir"
+crane pull --format=oci "$REPOSITORY:@$(jq -r .version.digest "$INPUT_FILE")" "$oci_dir"
 cd "$oci_dir"
 tar cf "$1/image.tar" ./*
 cd - 1>&2 2>/dev/null
