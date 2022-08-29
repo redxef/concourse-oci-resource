@@ -7,6 +7,6 @@ set -eu
 
 oci_dir="$(mktemp -d)"
 crane pull --format=oci "$REPOSITORY:@$(jq -r .version "$INPUT_FILE")" "$oci_dir"
-pushd "$oci_dir" && tar cf "$1/image.tar" && popd
+cd "$oci_dir" && tar cf "$1/image.tar" && cd -
 
 echo "$(jq -r .version < "$INPUT_FILE")"
