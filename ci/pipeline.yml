@@ -19,6 +19,7 @@ resources:
     fetch_tags: true
 - name: upstream-image
   type: registry-image
+  check_every: 6h
   source:
     repository: alpine
 - name: concourse-oci-resource
