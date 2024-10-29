@@ -1,5 +1,9 @@
 # concourse-oci-resource
 
+**DEPRECATED: this resource is no longer needed, the concourse build
+task in combination with the registry-image can build and push multiarch
+images now.**
+
 A resource type for oci image tarballs.
 
 ## Source configuration
